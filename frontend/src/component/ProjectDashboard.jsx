@@ -545,6 +545,7 @@ const NewProjectModal = ({ onClose, onProjectCreated }) => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       });
       onProjectCreated();
     } catch (err) {

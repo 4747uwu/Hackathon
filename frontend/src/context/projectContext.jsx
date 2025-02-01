@@ -45,9 +45,11 @@ export const ProjectProvider = ({ children }) => {
         projectData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            credentials : "include"
+          },
+          withCredentials:true
+        },
       );
       setProjects([...projects, response.data]);
       return response.data;
