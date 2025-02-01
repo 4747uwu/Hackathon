@@ -36,10 +36,11 @@ const userSchema = new mongoose.Schema({
     }
   }],
   projects: [{
-    Project: {
+    project: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Project'
     },
+    name: String,
     role: {
       type: String,
       enum: ['leader', 'member'],

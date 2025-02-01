@@ -8,6 +8,7 @@ import authRoute from "./routes/authRoute.js";
 import projectRoute from "./routes/projectRoute.js";
 import userRoute from "./routes/userRoute.js";
 import userProfile from "./routes/userProfile.js";
+import inviteRoute from "./routes/inviteRoute.js";
 
 const app = express();
 const PORT = 5000;
@@ -42,4 +43,5 @@ app.use('/auth', authRoute);
 app.use('/project', projectRoute);
 app.use('/user', userRoute);
 app.use('/users/profile', userProfile);
+app.use('/',inviteRoute)
 

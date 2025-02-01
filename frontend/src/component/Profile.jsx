@@ -302,7 +302,7 @@ const UserProfile = () => {
           >
             <h2 className="text-xl font-semibold mb-4">Recent Projects</h2>
             <div className="space-y-4">
-              {user.projects?.slice(0, 3).map((project, index) => (
+              {user.projects?.slice(0, 9).map((project, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, x: -20 }}
@@ -311,7 +311,9 @@ const UserProfile = () => {
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <div>
-                    <h3 className="font-medium">{project.project.name || 'Project Name'}</h3>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">{project.name || 'Project Name'}</h2>     
+                    <h3 className="font-medium">{project._id|| 'Project Name'}</h3>
+                    
                     <p className="text-sm text-gray-600">Role: {project.role}</p>
                   </div>
                   <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">

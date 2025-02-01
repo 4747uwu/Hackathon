@@ -237,11 +237,13 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const ProjectDashboard = () => {
   const token = localStorage.getItem("token");
   console.log(token);
   const [projects, setProjects] = useState([]);
+  const [projectId, setProjectId] = useState("");
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -494,9 +496,14 @@ const ProjectDashboard = () => {
                   <span className="text-sm text-gray-500">
                     Due: {new Date(project.deadline).toLocaleDateString()}
                   </span>
-                  <button className="text-blue-600 hover:text-blue-800">
-                    View Details
-                  </button>
+                    <Link to={`/project/${project._id}`}>
+                <button
+                  onClick={() => setProjectId(project._id)}
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  View Details
+                </button>
+                </Link>
                 </div>
               </div>
             </div>
