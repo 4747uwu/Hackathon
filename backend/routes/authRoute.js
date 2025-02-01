@@ -27,11 +27,7 @@ router.get('/verify/:token', verifyAccount);
 
 // Google OAuth2 routes
 router.get('/google', googleAuth);
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
-  // Successful authentication
-  console.log('Login with Google successful:', req.user);
-  res.redirect('http://localhost:5173');
-});
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), googleAuthCallback);
 
 // router.get('/verify', authMiddleware, async (req, res) => {
 //   try {

@@ -109,15 +109,26 @@ passport.use(new GoogleStrategy({
   callbackURL: 'http://localhost:5000/auth/google/callback',
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    let user = await User.findOne({ googleId: profile.id });
-    if (!user) {
+    // Check if user already exists with the given email
+    let user = await User.findOne({ email: profile.emails[0].value });
+
+    if (user) {
+      // If user exists, update the user with new Google profile information
+      user.googleId = profile.id;
+      user.name = profile.displayName;
+      user.avatar = profile.photos[0].value;
+      await user.save();
+    } else {
+      // If user does not exist, create a new user
       user = new User({
         googleId: profile.id,
         name: profile.displayName,
         email: profile.emails[0].value,
+        avatar: profile.photos[0].value
       });
       await user.save();
     }
+
     done(null, user);
   } catch (error) {
     done(error, false);
@@ -128,6 +139,7 @@ export const googleAuth = passport.authenticate('google', { scope: ['profile', '
 
 export const googleAuthCallback = (req, res) => {
   const token = jwt.sign({ id: req.user._id }, JWT_SECRET, { expiresIn: '10h' });
+  console.log('Google Auth Token:', token);
   res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-  res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+  res.redirect(`${process.env.CLIENT_URL}`);
 };

@@ -239,6 +239,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const ProjectDashboard = () => {
+  const token = localStorage.getItem("token");
+  console.log(token);
   const [projects, setProjects] = useState([]);
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
