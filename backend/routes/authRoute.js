@@ -8,7 +8,8 @@ import {
   forgotPassword,
   verifyAccount,
   googleAuth,
-  googleAuthCallback
+  googleAuthCallback,
+  logout
 } from '../controller/authController.js';
 
 const router = express.Router();
@@ -55,6 +56,8 @@ router.get('/verify', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
+router.get('/logout', logout);
 
 
 export default router;
