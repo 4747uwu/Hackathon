@@ -64,7 +64,7 @@ const Login = () => {
     console.log('Form data on submit:', formData); // Debug log
 
     if (result.success) {
-      const from = location.state?.from?.pathname || '/';
+      const from = location.state?.from?.pathname || '/dashboard';
       navigate(from);
     } else {
       // Handle error case
@@ -147,7 +147,7 @@ const Login = () => {
             )}
             
 
-            {isLogin && (
+            
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -162,7 +162,7 @@ const Login = () => {
                   className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
                 />
               </motion.div>
-            )}
+            
 
             <motion.div
               initial={{ opacity: 0, y: 10 }}

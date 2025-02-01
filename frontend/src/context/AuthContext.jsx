@@ -82,6 +82,7 @@ export const AuthProvider = ({ children }) => {
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 setUser(data.user);
+                console.log(data.user);
                 return { success: true };
             } else {
                 setError(data.message);
@@ -134,6 +135,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.removeItem('user');
             setUser(null);
             setError(null);
+            console.log('Logged out');
             return { success: true };
         } catch (error) {
             console.error('Error logging out:', error);

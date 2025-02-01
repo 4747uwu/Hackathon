@@ -5,7 +5,9 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 
 import authRoute from "./routes/authRoute.js";
-
+import projectRoute from "./routes/projectRoute.js";
+import userRoute from "./routes/userRoute.js";
+import userProfile from "./routes/userProfile.js";
 
 const app = express();
 const PORT = 5000;
@@ -36,6 +38,8 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-
-
 app.use('/auth', authRoute);
+app.use('/project', projectRoute);
+app.use('/user', userRoute);
+app.use('/users/profile', userProfile);
+
