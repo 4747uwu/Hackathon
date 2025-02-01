@@ -7,7 +7,7 @@ const Login = () => {
   const { login, signup, error } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
-    username: '',
+    name: '',
     password: '',
     email: ''
   });
@@ -63,10 +63,14 @@ const Login = () => {
       : await signup(formData);
     console.log('Form data on submit:', formData); // Debug log
 
-    if (result.success) {
+    if (result.success && isLogin) {
       const from = location.state?.from?.pathname || '/dashboard';
       navigate(from);
-    } else {
+    } else if(result.success){
+      console.log("registered")
+      window.location.reload();
+    } 
+    else {
       // Handle error case
       console.error('Error result:', result.error); // Debug log
     }
@@ -137,9 +141,9 @@ const Login = () => {
             >
               <input
                 type="text"
-                name="username"
+                name="name"
                 placeholder="Username"
-                value={formData.username}
+                value={formData.name}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
               />
