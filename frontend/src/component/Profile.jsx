@@ -15,7 +15,7 @@ const UserProfile = () => {
     //editing features
     const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({
-    name: user.name,
+    //name: user.name,
     role: user.role,
     email: user.email,
     bio: user.bio || '',

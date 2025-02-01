@@ -275,6 +275,7 @@ const ProjectDashboard = () => {
       setIsLoading(true);
       const res = await axios.get("http://localhost:5000/project", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        withCredentials: true,
       });
       setProjects(res.data);
     } catch (err) {

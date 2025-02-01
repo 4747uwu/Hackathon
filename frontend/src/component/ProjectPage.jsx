@@ -203,7 +203,7 @@ const ProjectDetails = () => {
                 {project.team.map((member, index) => (
                   <div key={index} className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                      {member.name.charAt(0)}
+                      {member.email.charAt(0)}
                     </div>
                     <div>
                       <p className="font-medium">{member.name}</p>

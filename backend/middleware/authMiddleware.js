@@ -3,11 +3,16 @@ import User from '../models/userModel.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
+
 const authMiddleware = async (req, res, next) => {
   try {
     // Get token from header
+
+    console.log("Cookies received:", req.cookies);
+  console.log("Token from cookies:", req.cookies.token);
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
+
+    const token = req.cookies.token;
 
     // Debug logs
     console.log('Auth Header:', authHeader);

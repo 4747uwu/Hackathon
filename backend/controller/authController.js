@@ -10,6 +10,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 // JWT secret key
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
+
 // Google OAuth2 client
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
