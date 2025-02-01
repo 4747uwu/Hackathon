@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import React from 'react';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -136,6 +137,7 @@ export const AuthProvider = ({ children }) => {
             setUser(null);
             setError(null);
             console.log('Logged out');
+            await axios.get("http://localhost:5000/auth/logout", { withCredentials: true });
             return { success: true };
         } catch (error) {
             console.error('Error logging out:', error);

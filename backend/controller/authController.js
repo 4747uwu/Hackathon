@@ -143,3 +143,9 @@ export const googleAuthCallback = (req, res) => {
   res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
   res.redirect(`${process.env.CLIENT_URL}`);
 };
+
+
+export const logout = (req, res) => {
+  res.cookie('token', '', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+  res.json({ message: "Logged out successfully" });
+};
