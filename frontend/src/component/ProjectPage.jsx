@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import InviteTeamModal from '../component/InviteTeamModal';
 import { 
   Clock, 
   Flag, 
@@ -39,6 +40,13 @@ const ProjectDetails = () => {
   if (!project) {
     return <div>Loading...</div>;
   }
+
+
+  <InviteTeamModal 
+  isOpen={showTeamModal}
+  onClose={() => setShowTeamModal(false)}
+  projectId={project._id}
+/>
 
   const today = new Date();
   const deadline = new Date(project.deadline);
@@ -205,6 +213,13 @@ const ProjectDetails = () => {
                 ))}
               </div>
             </div>
+
+            
+                <InviteTeamModal 
+                isOpen={showTeamModal}
+                onClose={() => setShowTeamModal(false)}
+                projectId={project._id}
+                />
 
             {/* Project Stats */}
             <div className="bg-white rounded-lg shadow p-4">

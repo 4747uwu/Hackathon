@@ -1,14 +1,14 @@
 import express from 'express';
 import User from '../models/userModel.js';
 import Project from '../models/Project.js';
-// import { authenticateUser } from '../middleware/authMiddleware.js'; // Middleware to get `req.user`
+import authMiddleware from '../middleware/authMiddleware.js'; // Middleware to get `req.user`
 
 const router = express.Router();
 
 /**
  * 🔹 1. Search Users by Email
  */
-router.get('/users',  async (req, res) => {
+router.get('/users', authMiddleware,  async (req, res) => {
   try {
     const { email } = req.query;
     const users = await User.find({ 
@@ -25,7 +25,7 @@ router.get('/users',  async (req, res) => {
 /**
  * 🔹 2. Send Project Invitation
  */
-router.post('/invite',  async (req, res) => {
+router.post('/invite',authMiddleware,  async (req, res) => {
   try {
     const { userId, projectId } = req.body;
 

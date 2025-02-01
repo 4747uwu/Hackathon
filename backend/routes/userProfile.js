@@ -49,7 +49,7 @@ router.put('/', authMiddleware, async (req, res) => {
     const { name, role, email, bio } = req.body;
 
     // Find user and check if email is already taken (if email is being changed)
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).populate('pendingRequests.from', 'name email');
     if (email !== user.email) {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
