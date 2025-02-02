@@ -275,6 +275,7 @@ const ProjectDashboard = () => {
       setIsLoading(true);
       const res = await axios.get("http://localhost:5000/project", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        withCredentials: true,
       });
       setProjects(res.data);
     } catch (err) {
@@ -544,6 +545,7 @@ const NewProjectModal = ({ onClose, onProjectCreated }) => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       });
       onProjectCreated();
     } catch (err) {

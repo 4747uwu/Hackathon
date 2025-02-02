@@ -42,6 +42,7 @@ app.use(session({
 // API routes
 app.use('/auth', authRoute);
 app.use('/project', projectRoute);
+app.use('/task',taskRoute)
 app.use('/user', userRoute);
 app.use('/users/profile', userProfile);
 app.use('/', inviteRoute);

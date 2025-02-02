@@ -39,6 +39,7 @@ router.get('/', authMiddleware, async (req, res) => {
 // });
 
 router.post("/", authMiddleware, async (req, res) => {
+  console.log("yes");
   try {
     const { title, description, status } = req.body;
 
