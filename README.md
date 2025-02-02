@@ -46,33 +46,17 @@ To get started with STREAMLINE, follow these steps:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/STREAMLINE.git
-
+gh repo clone 4747uwu/Hackathon
 
 2. **Navigate to the project directory:**
    ```bash
-   cd STREAMLINE
+   cd Hackathon
 
 3. **Install Dependencies:**
    ```bash
    npm Install
 
-4. **Run the Application:**
-   ```bash
-   npm start
 
-
-## ***Deployment***
-
-To deploy this project run
-
-```bash
-  npm run dev
-```
- or 
-```bash
-  yarn dev
-```
 Dependencies Overview
 Backend Dependencies:
 @vercel/blob: Blob storage utility for file handling.
@@ -120,7 +104,6 @@ use - npm run dev (make sure the frontend runs on the prot 5173)
 
 Contributions are always welcome!
 
-See `contributing.md` for ways to get started.
 
 Please adhere to this project's `code of conduct`.
 
