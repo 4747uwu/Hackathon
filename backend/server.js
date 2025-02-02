@@ -9,6 +9,7 @@ import projectRoute from "./routes/projectRoute.js";
 import userRoute from "./routes/userRoute.js";
 import userProfile from "./routes/userProfile.js";
 import inviteRoute from "./routes/inviteRoute.js";
+import taskRoute from "./routes/taskRoute.js";
 
 const app = express();
 const PORT = 5000;
@@ -41,6 +42,7 @@ app.listen(PORT, () => {
 
 app.use('/auth', authRoute);
 app.use('/project', projectRoute);
+app.use('/task',taskRoute)
 app.use('/user', userRoute);
 app.use('/users/profile', userProfile);
 app.use('/',inviteRoute)
