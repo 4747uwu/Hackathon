@@ -32,6 +32,7 @@ const ProjectDetails = () => {
     try {
       const response = await axios.get(`http://localhost:5000/project/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        withCredentials:true
       });
       setProject(response.data);
       console.log("Fetched project:", response.data);

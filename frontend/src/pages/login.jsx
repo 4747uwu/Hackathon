@@ -31,7 +31,7 @@ const Login = () => {
   const fetchImages = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/welcome-image');
+      const response = await fetch('http://localhost:5000/welcome-image',{withCredentials:true});
       const data = await response.json();
       console.log('Fetched image data:', data); // Debug log
       if (data && data.length > 0) {

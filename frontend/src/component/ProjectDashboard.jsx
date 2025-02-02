@@ -310,7 +310,8 @@ const ProjectDashboard = () => {
         case "delete":
           await Promise.all(selectedProjects.map(id => 
             axios.delete(`http://localhost:5000/project/${id}`, {
-              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+              withCredentials:true
             })
           ));
           break;
@@ -318,7 +319,8 @@ const ProjectDashboard = () => {
           await Promise.all(selectedProjects.map(id => 
             axios.patch(`http://localhost:5000/project/${id}`, 
               { status: "Completed" },
-              { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }}
+              { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+              withCredentials:true}
             )
           ));
           break;

@@ -38,7 +38,8 @@ const InviteTeamModal = ({ isOpen, onClose, projectId, projectName, projectPrior
 
     try {
       const response = await axios.get(`http://localhost:5000/users?email=${email}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        withCredentials:true
       });
       setSearchResults(response.data);
     } catch (error) {
@@ -54,7 +55,9 @@ const InviteTeamModal = ({ isOpen, onClose, projectId, projectName, projectPrior
     try {
       await axios.post('http://localhost:5000/invite', 
          { userId, projectId, projectName, projectPriority, projectDeadline },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        withCredentials:true},
+        
       );
       setInvitedUsers(new Set([...invitedUsers, userId]));
     } catch (error) {

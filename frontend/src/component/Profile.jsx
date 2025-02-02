@@ -22,7 +22,8 @@ const UserProfile = () => {
         const fetchPendingRequests = async () => {
         try {
             const response = await axios.get('http://localhost:5000/invites', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` ,
+            withCredentials:true},
             });
             setPendingRequests(response.data); 
             console.log('Pending Requests:', response.data); // Debug log
@@ -60,6 +61,7 @@ const UserProfile = () => {
           headers: {
             'Authorization': `Bearer ${token}`
           },
+          withCredentials:true,
           body: formData
         });
 

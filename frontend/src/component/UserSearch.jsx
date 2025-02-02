@@ -19,6 +19,8 @@ const UserSearch = () => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
+        ,
+        withCredentials:true
       });
       setSearchResults(res.data);
     } catch (err) {
@@ -66,7 +68,8 @@ const PendingRequests = () => {
       const response = await axios.get('http://localhost:5000/user/pending-requests', {
         headers: {
           'Authorization': `Bearer ${token}`
-        }
+        },
+        withCredentials:true
       });
       setRequests(response.data);
     } catch (error) {
@@ -87,6 +90,8 @@ const PendingRequests = () => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
+        ,
+        withCredentials:true
       });
       fetchPendingRequests();
     } catch (err) {

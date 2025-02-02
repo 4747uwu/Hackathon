@@ -20,7 +20,7 @@ const ProjectDiscussion = ({ projectId }) => {
     socket.emit('join', { projectId, userId: user._id });
 
     // Fetch previous messages
-    fetch(`http://localhost:5000/api/projects/${projectId}/messages`)
+    fetch(`http://localhost:5000/api/projects/${projectId}/messages`,{withCredentials:true})
       .then(res => res.json())
       .then(setMessages)
       .catch(err => console.error('Error loading messages:', err));
