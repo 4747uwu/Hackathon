@@ -129,7 +129,7 @@ Please adhere to this project's `code of conduct`.
 
 ## Screenshots
 
-![App Screenshot](https://imgur.com/zh8A4Qv)
+![App Screenshot]([https://imgur.com/zh8A4Qv](https://github.com/4747uwu/Hackathon/blob/main/Screenshot1.png))
 
 ![App Screenshot](https://imgur.com/undefined)
 
