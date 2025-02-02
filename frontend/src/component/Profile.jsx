@@ -23,7 +23,8 @@ const UserProfile = () => {
         try {
             const response = await axios.get('http://localhost:5000/invites', {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` ,
-            withCredentials:true},
+            },
+            withCredentials:true
             });
             setPendingRequests(response.data); 
             console.log('Pending Requests:', response.data); // Debug log

@@ -28,10 +28,9 @@ const RequestManagement = () => {
       const response = await axios.get('http://localhost:5000/invites', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         withCredentials:true
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}`,
         
-     },
-     withCredentials:true
+        
+   
       });
       const pending = response.data.filter(request => request.status === 'pending');
       
@@ -50,9 +49,7 @@ const RequestManagement = () => {
       const response = await axios.get(`http://localhost:5000/users?email=${searchQuery}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         withCredentials:true
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-       withCredentials:true
+        
 
       });
       setAllUsers(response.data);
