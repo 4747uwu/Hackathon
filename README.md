@@ -31,6 +31,9 @@ Smart Meeting Planner: AI-powered meeting scheduler with automatic agenda genera
 - Quick Notes: Context-aware note-taking system that automatically links related content and suggests relevant team members to collaborate.
 
 
+Tech Stack Used Currently
+react vite, mongodb, node, express, tailwind
+
 ## ***Getting Started***
 
 To get started with this project follow the setup instructions provided below.
