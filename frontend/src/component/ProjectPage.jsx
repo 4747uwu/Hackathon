@@ -14,9 +14,11 @@ import {
   ChevronDown,
   Share2,
   MoreHorizontal,
-  Calendar
+  Calendar,
+  Milestone
 } from 'lucide-react';
 import ProjectDiscussion from './ProjectDiscussion';
+import MilestoneTracker from './MilestoneTracker';
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -242,6 +244,7 @@ console.log('Project:', project); // Debug log
             
             {activeTab === 'tasks' && (
               <div className="bg-white rounded-lg shadow">
+                <MilestoneTracker projectId={project._id}/>
                 <div className="p-4 border-b flex justify-between items-center">
                   <h2 className="text-lg font-medium">Tasks</h2>
                   <button className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2" onClick={() => setShowNewTaskModal(true)}>

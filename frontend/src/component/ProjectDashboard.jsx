@@ -261,6 +261,37 @@ const ProjectDashboard = () => {
     inProgress: 0,
     overdue: 0
   });
+  const checkAuth = async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/auth/verify', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        });
+        console.log(response);
+        if (response.data) {
+            localStorage.setItem('user',JSON.stringify(response.data));
+        } else {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setToken(null);
+            setUser(null);
+        }
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        setError(error.message);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setToken(null);
+        setUser(null);
+    } 
+  }
+
+  useEffect(()=>{
+    checkAuth();
+  })
 
   useEffect(() => {
     fetchProjects();

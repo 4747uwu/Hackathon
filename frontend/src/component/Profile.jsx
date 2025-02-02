@@ -39,7 +39,7 @@ const UserProfile = () => {
 
   const [editedUser, setEditedUser] = useState({
     name: user.name,
-    role: user.role,
+    role: user.role || 'user',
     email: user.email,
     bio: user.bio || '',
   });
@@ -63,6 +63,7 @@ const UserProfile = () => {
             'Authorization': `Bearer ${token}`
           },
           withCredentials:true,
+          credentials : 'include',
           body: formData
         });
 
@@ -86,6 +87,7 @@ const UserProfile = () => {
           'Content-Type': 'application/json'
         },
         withCredentials: true,
+        credentials : 'include',
         body: JSON.stringify(editedUser)
       });
 
@@ -170,7 +172,7 @@ const UserProfile = () => {
                     </div>
                   ) : (
                     <>
-                      <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
+                      <h1 className="text-2xl font-bold text-white">{user.name}</h1>
                       <p className="text-gray-600">{user.role}</p>
                     </>
                   )}
