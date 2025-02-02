@@ -12,6 +12,7 @@ import inviteRoute from "./routes/inviteRoute.js";
 import setupWebSocketServer from './config/websocketConfig.js';
 import http from 'http';
 import discussionRoute from './routes/discussionRoute.js';
+import taskRoute from './routes/taskRoute.js';
 
 const app = express();
 const PORT = 5000;
