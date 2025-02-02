@@ -110,7 +110,7 @@ router.post("/generate/:projectId", authMiddleware, async (req, res) => {
           project.tasks.map(async (taskId) => {
             const task = await Task.findOne({ _id: taskId });
             if (!task) throw new Error(`Task with ID ${taskId} not found`);
-            return task.title; // Extract task title
+            return task; // Extract task title
           })
         );
       } catch (error) {
@@ -119,9 +119,15 @@ router.post("/generate/:projectId", authMiddleware, async (req, res) => {
       }
   
       console.log("Tasks:", tasks);
+     const incompleteTasks = tasks.filter((task) => {
+  console.log("Task Status:", task.status); // Debug log to check the status
+  return task.status.trim() !== 'completed'; // Ensure no leading/trailing spaces
+});
+
+console.log("Incomplete Tasks:", incompleteTasks);
   
       // ✅ Step 3: Prepare prompt for Gemini API
-      const prompt = `Given the project titled "${project.title}" with the description: "${project.description}" and tasks : "${tasks}", generate a structured list of key milestones that might be needed in the project. Only return a list of one-word milestone names in this exact format: ["milestone1","milestone2","milestone3","milestone4"...]. Avoid backticks or any quotes outside of the array.`;
+      const prompt = `Given the project titled "${project.title}" with the description: "${project.description}" and tasks are ${incompleteTasks}, generate a structured list of key milestones that might be needed in the project. Only return a list of milestone names with hints for doing them in this exact format: ["milestone1","milestone2","milestone3","milestone4"]. Avoid backticks or any quotes outside of the array. emphasis including the name of the tasks dont give general milestones like`;
   
       console.log("Using API Key:", process.env.GEMINI_API_KEY);
   

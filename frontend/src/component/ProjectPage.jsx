@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import InviteTeamModal from '../component/InviteTeamModal';
+import MilestoneTracker from '../component/MilestoneTracker';
 import { 
   Clock, 
   Flag, 

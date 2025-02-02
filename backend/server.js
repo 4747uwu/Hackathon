@@ -17,6 +17,7 @@ import {put} from '@vercel/blob'
 import multer from 'multer';
 import uploadRoute from './routes/uploadRoute.js'
 import welcomeImage from './routes/welcomeImage.js'
+import milestoneRoute from './routes/milestoneRoute.js'
 
 
 const app = express();
@@ -58,6 +59,7 @@ app.use('/', inviteRoute);
 app.use('/', discussionRoute);
 app.use('/files',uploadRoute)
 app.use('/welcome-image',welcomeImage)
+app.use('/milestone',milestoneRoute)
 
 // Start the HTTP server
 server.listen(PORT, () => {
