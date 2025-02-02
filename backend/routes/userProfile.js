@@ -126,7 +126,7 @@ router.put('/', authMiddleware, async (req, res) => {
       email,
       bio
     };
-
+    console.log(req.user.role);
     if (req.user.role === 'admin') {
       updateFields.role = role;
     } else {

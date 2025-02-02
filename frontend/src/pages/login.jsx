@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { AuthProvider } from '../context/AuthContext'
 
 const Login = () => {
   const { login, signup, error } = useAuth();
@@ -54,6 +55,8 @@ const Login = () => {
     });
     console.log('Form data:', formData); // Debug log
   };
+
+  
 
  const handleSubmit = async (e) => {
   e.preventDefault();
