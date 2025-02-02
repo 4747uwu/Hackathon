@@ -13,6 +13,7 @@ const UserProfile = () => {
     console.log('User:', user); // Debug log
     const token = localStorage.getItem('token');
     console.log('Token:', token); // Debug log
+    
 
 
     //editing features
@@ -26,7 +27,9 @@ const UserProfile = () => {
             },
             withCredentials:true
             });
-            setPendingRequests(response.data); 
+            const pending = response.data.filter(request => request.status === 'pending');
+      
+            setPendingRequests(pending);
             console.log('Pending Requests:', response.data); // Debug log
             // Assuming the response has a field with the array of invites
         } catch (error) {
@@ -59,10 +62,8 @@ const UserProfile = () => {
 
         const response = await fetch("http://localhost:5000/users/profile/profile-image", {
           method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          withCredentials:true,
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}`},
+          credentials: 'include',
           body: formData
         });
 
@@ -81,11 +82,8 @@ const UserProfile = () => {
     try {
       const response = await fetch('http://localhost:5000/users/profile', {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true,
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}`},
+          credentials: 'include',
         body: JSON.stringify(editedUser)
       });
 

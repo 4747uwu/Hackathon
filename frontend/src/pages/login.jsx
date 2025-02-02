@@ -31,12 +31,12 @@ const Login = () => {
   const fetchImages = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/welcome-image',{withCredentials:true});
+      const response = await fetch('http://localhost:5000/welcome-image/image',{withCredentials:true});
       const data = await response.json();
       console.log('Fetched image data:', data); // Debug log
       if (data && data.length > 0) {
-        setImages(data.map(item => item.imageUrl));
-        console.log('Image URLs set:', data.map(item => item.imageUrl)); // Debug log
+        setImages(data.map(item => item.url));
+        console.log('Image URLs set:', data.map(item => item.url)); // Debug log
       } else {
         console.log('No image URLs found in data:', data); // Debug log
       }
