@@ -131,5 +131,5 @@ Please adhere to this project's `code of conduct`.
 
 ![App Screenshot](Screenshot1.png)
 
-![App Screenshot](https://imgur.com/undefined)
+![App Screenshot](Screenshot2.png)
 
