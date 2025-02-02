@@ -128,6 +128,21 @@ router.put('/complete/:_id', authMiddleware, async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+router.put('/assign/:_id', authMiddleware, async (req, res) => {
+    try {
+        const task = await Task.findById(req.params._id);
+        if (!task) return res.status(404).json({ msg: 'Task not found' });
+
+        // Update only the status field
+        task.assignedTo = req.body.assignedTo;
+        await task.save();
+
+        res.json(task);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
 router.get('/:_id',  async (req, res) => {
   try {
     const project = await Task.findById(req.params._id);

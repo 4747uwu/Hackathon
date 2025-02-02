@@ -103,6 +103,23 @@ const ProjectDetails = () => {
       console.error("Error marking task as completed:", error);
     }
   };
+
+  const handleAssignTask = async (taskId, userId) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/task/assign/${taskId}`,
+        { assignedTo: userId || null }, // Send null if "None" is selected
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          withCredentials: true
+        }
+      );
+      fetchProject();
+      console.log(`Task ${taskId} assigned to ${userId || "None"}`);
+    } catch (error) {
+      console.error("Error assigning task:", error);
+    }
+  };
   
 
   <InviteTeamModal 
@@ -234,18 +251,33 @@ const ProjectDetails = () => {
                   ) : (
                     <div className="space-y-3">
                       {tasks.map((task, index) => (
-                        <div key={index} className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg" onClick={(e) => {markTaskAsCompleted(task._id)}}>
+                        <div key={index} className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg" >
                           <CheckSquare
   size={20}
   className={task.status === "completed" ? "text-green-500" : "text-gray-400"}
 />
-                          <div className="flex-1">
+                          <div className="flex-1" onClick={(e) => {markTaskAsCompleted(task._id)}}>
                             <h3 className="font-medium">{task.title}</h3>
                             <p className="text-sm text-gray-500">{task.description}</p>
                             <p className="text-sm text-gray-500">status:{task.status}</p>
                             <p className="text-sm text-gray-500">due:{task.dueDate}</p>
+                            
                           </div>
+                          Assigned To:
+                            <select
+          className="mt-2 p-1 border rounded"
+          value={task.assignedTo || ""}
+          onChange={(e) => handleAssignTask(task._id, e.target.value)}
+        >
+          <option value="">None</option>
+          {project.team.map((member) => (
+            <option key={member._id} value={member._id}>
+              {member.name}
+            </option>
+          ))}
+        </select>
                         </div>
+                        
                       ))}
                     </div>
                   )}
