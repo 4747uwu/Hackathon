@@ -145,10 +145,8 @@ router.put('/invite/accept/:inviteId', authMiddleware, async (req, res) => {
     await user.save();
     console.log('Invite status updated to accepted');
 
-     const userRole = invite.role || 'member';
-
     // Add user to the project team
-    project.team.push({ user: user._id, role: userRole });
+    project.team.push(user._id);
     await project.save();
     console.log('User added to project team');
 
@@ -157,15 +155,13 @@ router.put('/invite/accept/:inviteId', authMiddleware, async (req, res) => {
     await user.save();
     console.log('Project added to user\'s projects list');
 
-    user.connections.push({
+       user.connections.push({
       _id: invitingUser._id,
       name: invitingUser.name,
       email: invitingUser.email,
       project: {
         _id: project._id,
-        name: project.title,
-        priority: project.priority,
-        deadline: project.deadline
+        name: project.name
       }
     });
     invitingUser.connections.push({
@@ -174,14 +170,11 @@ router.put('/invite/accept/:inviteId', authMiddleware, async (req, res) => {
       email: user.email,
       project: {
         _id: project._id,
-        name: project.title,
-        priority: project.priority,
-        deadline: project.deadline
+        name: project.name
       }
     });
 
-    await user.save();
-    await invitingUser.save();
+    
 
     res.json({ message: "Invite accepted", project });
   } catch (err) {

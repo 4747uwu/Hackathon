@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import { 
   UserPlus, 
   Users, 
@@ -25,7 +26,10 @@ const RequestManagement = () => {
     console.log('token:', localStorage.getItem('token'));
     try {
       const response = await axios.get('http://localhost:5000/invites', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}`,
+        
+     },
+     withCredentials:true
       });
       const pending = response.data.filter(request => request.status === 'pending');
       
@@ -42,7 +46,10 @@ const RequestManagement = () => {
     setLoading(true);
     try {
       const response = await axios.get(`http://localhost:5000/users?email=${searchQuery}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+       withCredentials:true
+
       });
       setAllUsers(response.data);
     } catch (error) {
@@ -59,7 +66,9 @@ const RequestManagement = () => {
       const response = await axios.put(
         `http://localhost:5000/invite/${action}/${inviteId}`,
         {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+         withCredentials:true
+       }
       );
       showNotification(`Request ${action}ed successfully!`, 'success');
       // Update the pending requests state

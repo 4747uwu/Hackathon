@@ -6,18 +6,26 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
-        // Initialize user from localStorage if available
         const savedUser = localStorage.getItem('user');
         return savedUser ? JSON.parse(savedUser) : null;
     });
+    const [token, setToken] = useState(() => localStorage.getItem('token') || null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-       
-    
-    // Check authentication status when component mounts
+
+    // Update localStorage when token changes
+    useEffect(() => {
+        if (token) {
+            localStorage.setItem('token', token);
+        } else {
+            localStorage.removeItem('token');
+        }
+    }, [token]);
+
+    // Check authentication status when component mounts or token changes
     useEffect(() => {
         checkAuth();
-    }, []);
+    }, [token]); // Added token as dependency
 
     // Update localStorage whenever user state changes
     useEffect(() => {
@@ -29,33 +37,27 @@ export const AuthProvider = ({ children }) => {
     }, [user]);
 
     const checkAuth = async () => {
-
         try {
-            const token = localStorage.getItem('token');
-            const setToken = token;
-            console.log(token);
             if (!token) {
                 setUser(null);
                 setLoading(false);
                 return;
             }
 
-            const response = await fetch('http://localhost:5000/auth/verify', {
-                method: 'GET',
+            const response = await axios.get('http://localhost:5000/auth/verify', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
-                }
+                },
+                withCredentials: true
             });
 
-            if (response.ok) {
-                const userData = await response.json();
-                console.log(userData);
-                setUser(userData);
+            if (response.data) {
+                setUser(response.data);
             } else {
-                // If verification fails, clear everything
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
+                setToken(null);
                 setUser(null);
             }
         } catch (error) {
@@ -63,6 +65,7 @@ export const AuthProvider = ({ children }) => {
             setError(error.message);
             localStorage.removeItem('token');
             localStorage.removeItem('user');
+            setToken(null);
             setUser(null);
         } finally {
             setLoading(false);
@@ -71,134 +74,84 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (credentials) => {
         try {
-            setError(null); // Clear any previous errors
-            const response = await fetch('http://localhost:5000/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(credentials),
-                credentials: 'include' // To handle cookies if your API uses them
-            });
+            setError(null);
+            const response = await axios.post('http://localhost:5000/auth/login', 
+                credentials,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
+                }
+            );
 
-            const data = await response.json();
-
-            if (response.ok) {
-                localStorage.setItem('token', data.token);
-                console.log(data.token);
-                setUser(data.user);
-                console.log(data.user);
-                return { success: true };
-            } else {
-                setError(data.message);
-                return { success: false, message: data.message };
-            }
+            const { token: newToken, user: userData } = response.data;
+            setToken(newToken);
+            setUser(userData);
+            return { success: true };
         } catch (error) {
             console.error('Error logging in:', error);
-            setError(error.message);
-            return { success: false, message: error.message };
+            setError(error.response?.data?.message || error.message);
+            return { success: false, message: error.response?.data?.message || error.message };
         }
     };
 
     const signup = async (credentials) => {
         try {
             setError(null);
-            const response = await fetch('http://localhost:5000/auth/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(credentials),
-                credentials: 'include'
-            });
+            const response = await axios.post('http://localhost:5000/auth/signup',
+                credentials,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
+                }
+            );
 
-            const data = await response.json();
-
-            if (response.ok) {
-                // Don't set user here since they need to verify their email first
-                return { 
-                    success: true, 
-                    message: 'Please check your email to verify your account' 
-                };
-            } else {
-                setError(data.message);
-                return { success: false, message: data.message };
-            }
+            return { 
+                success: true, 
+                message: 'Please check your email to verify your account' 
+            };
         } catch (error) {
             console.error('Error signing up:', error);
-            setError(error.message);
-            return { success: false, message: error.message };
+            setError(error.response?.data?.message || error.message);
+            return { success: false, message: error.response?.data?.message || error.message };
         }
     };
 
     const logout = async () => {
         try {
-            // Call logout endpoint if you have one
-            // await fetch('http://localhost:4000/api/auth/logout', ...);
-
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            setUser(null);
-            setError(null);
-            console.log('Logged out');
-            await axios.get("http://localhost:5000/auth/logout", { withCredentials: true });
-            return { success: true };
+            await axios.get("http://localhost:5000/auth/logout", { 
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true 
+            });
         } catch (error) {
             console.error('Error logging out:', error);
-            setError(error.message);
-            return { success: false, message: error.message };
+        } finally {
+            // Always clear local state, even if the server request fails
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setToken(null);
+            setUser(null);
+            setError(null);
+            return { success: true };
         }
     };
 
-    // Add a token refresh function
-    // const refreshToken = async () => {
-    //     try {
-    //         const response = await fetch('http://localhost:4000/api/auth/refresh-token', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             credentials: 'include'
-    //         });
-
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             localStorage.setItem('token', data.token);
-    //             setUser(data.user);
-    //             return true;
-    //         }
-    //         return false;
-    //     } catch (error) {
-    //         console.error('Error refreshing token:', error);
-    //         return false;
-    //     }
-    // };
-
-    // // Add automatic token refresh
-    // useEffect(() => {
-    //     if (user) {
-    //         const refreshInterval = setInterval(() => {
-    //             refreshToken();
-    //         }, 14 * 60 * 1000); // Refresh every 14 minutes if token expires in 15 minutes
-
-    //         return () => clearInterval(refreshInterval);
-    //     }
-    // }, [user]);
-
     const value = {
         user,
+        token,
         loading,
         error,
         login,
         signup,
         logout,
-        
         checkAuth
     };
 
     if (loading) {
-        return <div>Loading...</div>; // Or your loading component
+        return <div>Loading...</div>;
     }
 
     return (

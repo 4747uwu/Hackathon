@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Search, UserPlus, Check } from 'lucide-react';
 import axios from 'axios';
+import { use } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 const InviteTeamModal = ({ isOpen, onClose, projectId, projectName, projectPriority, projectDeadline }) => {
   const [searchEmail, setSearchEmail] = useState('');
@@ -8,6 +10,8 @@ const InviteTeamModal = ({ isOpen, onClose, projectId, projectName, projectPrior
   const [loading, setLoading] = useState(false);
   const [invitedUsers, setInvitedUsers] = useState(new Set());
   const modalRef = useRef();
+  const {token} = useAuth();
+  console.log('token:', token); 
 
   // Close modal when clicking outside
   useEffect(() => {
@@ -38,7 +42,9 @@ const InviteTeamModal = ({ isOpen, onClose, projectId, projectName, projectPrior
 
     try {
       const response = await axios.get(`http://localhost:5000/users?email=${email}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}`
+       },
+        withCredentials:true
       });
       setSearchResults(response.data);
     } catch (error) {
@@ -54,7 +60,8 @@ const InviteTeamModal = ({ isOpen, onClose, projectId, projectName, projectPrior
     try {
       await axios.post('http://localhost:5000/invite', 
          { userId, projectId, projectName, projectPriority, projectDeadline },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          withCredentials:true}
       );
       setInvitedUsers(new Set([...invitedUsers, userId]));
     } catch (error) {

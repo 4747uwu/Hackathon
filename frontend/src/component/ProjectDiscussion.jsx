@@ -9,13 +9,18 @@ const socket = io('http://localhost:5000', {
 }); // Ensure this matches backend
 
 const ProjectDiscussion = ({ projectId }) => {
+    console.log('Project ID:', projectId);
   const { user } = useAuth();
+      console.log('user', user);
+
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (!user || !projectId) return;
+    console.log('Joining project:', projectId);
+    console.log('User:', user);
 
     socket.emit('join', { projectId, userId: user._id });
 

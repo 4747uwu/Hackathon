@@ -82,6 +82,7 @@ const UserProfile = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
+        withCredentials: true,
         body: JSON.stringify(editedUser)
       });
 
