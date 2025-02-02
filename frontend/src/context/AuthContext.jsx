@@ -48,8 +48,7 @@ export const AuthProvider = ({ children }) => {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
-                },
-                withCredentials: true
+                }
             });
 
             if (response.data) {

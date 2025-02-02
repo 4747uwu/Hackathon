@@ -10,7 +10,8 @@ const InviteUserToProject = ({ projectId }) => {
   const searchUsers = async () => {
     if (!email) return;
     try {
-      const response = await axios.get(`http://localhost:5000/users?email=${email}`);
+      const response = await axios.get(`http://localhost:5000/users?email=${email}`,{
+        withCredentials:true});
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -20,7 +21,8 @@ const InviteUserToProject = ({ projectId }) => {
   // Send Invite
   const sendInvite = async (userId) => {
     try {
-      await axios.post('http://localhost:5000/invite', { userId, projectId });
+      await axios.post('http://localhost:5000/invite', { userId, projectId },{
+        withCredentials:true});
       alert('Invite sent successfully!');
     } catch (error) {
       alert(error.response?.data?.message || 'Error sending invite');
@@ -29,7 +31,8 @@ const InviteUserToProject = ({ projectId }) => {
 
   // Fetch Pending Requests
   useEffect(() => {
-    axios.get('http://localhost:5000/invites')
+    axios.get('http://localhost:5000/invites',{
+      withCredentials:true})
       .then(response => setPendingInvites(response.data))
       .catch(error => console.error(error));
   }, []);
@@ -37,7 +40,8 @@ const InviteUserToProject = ({ projectId }) => {
   // Accept Invite
   const acceptInvite = async (inviteId) => {
     try {
-      await axios.put(`http://localhost:5000/invite/accept/${inviteId}`);
+      await axios.put(`http://localhost:5000/invite/accept/${inviteId}`,{
+        withCredentials:true});
       alert('Invite accepted!');
       setPendingInvites(pendingInvites.filter(invite => invite._id !== inviteId));
     } catch (error) {

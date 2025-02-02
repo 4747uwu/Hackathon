@@ -25,7 +25,8 @@ export const ProjectProvider = ({ children }) => {
       const response = await axios.get("http://localhost:5000/project", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+        },
+        withCredentials:true
       });
       console.log(response.data);
       setProjects(response.data);
