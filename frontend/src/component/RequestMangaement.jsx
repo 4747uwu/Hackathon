@@ -22,6 +22,7 @@ const RequestManagement = () => {
 
   // Fetch pending requests
   const fetchPendingRequests = async () => {
+    console.log('token:', localStorage.getItem('token'));
     try {
       const response = await axios.get('http://localhost:5000/invites', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }

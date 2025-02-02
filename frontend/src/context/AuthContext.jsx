@@ -12,7 +12,8 @@ export const AuthProvider = ({ children }) => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+       
+    
     // Check authentication status when component mounts
     useEffect(() => {
         checkAuth();
@@ -28,8 +29,10 @@ export const AuthProvider = ({ children }) => {
     }, [user]);
 
     const checkAuth = async () => {
+
         try {
             const token = localStorage.getItem('token');
+            const setToken = token;
             console.log(token);
             if (!token) {
                 setUser(null);
@@ -82,6 +85,7 @@ export const AuthProvider = ({ children }) => {
 
             if (response.ok) {
                 localStorage.setItem('token', data.token);
+                console.log(data.token);
                 setUser(data.user);
                 console.log(data.user);
                 return { success: true };

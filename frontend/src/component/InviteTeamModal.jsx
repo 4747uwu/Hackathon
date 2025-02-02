@@ -34,6 +34,8 @@ const InviteTeamModal = ({ isOpen, onClose, projectId, projectName, projectPrior
     }
 
     setLoading(true);
+        console.log('token:', localStorage.getItem('token'));
+
     try {
       const response = await axios.get(`http://localhost:5000/users?email=${email}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -48,6 +50,7 @@ const InviteTeamModal = ({ isOpen, onClose, projectId, projectName, projectPrior
 
   // Send invitation
   const sendInvite = async (userId) => {
+    console.log('token:', localStorage.getItem('token'));
     try {
       await axios.post('http://localhost:5000/invite', 
          { userId, projectId, projectName, projectPriority, projectDeadline },
