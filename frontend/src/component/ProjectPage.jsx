@@ -16,12 +16,15 @@ import {
   MoreHorizontal,
   Calendar
 } from 'lucide-react';
+import ProjectDiscussion from './ProjectDiscussion';
 
 const ProjectDetails = () => {
   const { id } = useParams();
+  console.log('Project ID:', id); // Debug log
   const [project, setProject] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [showTeamModal, setShowTeamModal] = useState(false);
+  const [newMessage, setNewMessage] = useState('');
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -47,6 +50,7 @@ const ProjectDetails = () => {
   onClose={() => setShowTeamModal(false)}
   projectId={project._id}
 />
+console.log('Project:', project); // Debug log
 
   const today = new Date();
   const deadline = new Date(project.deadline);
@@ -184,11 +188,21 @@ const ProjectDetails = () => {
                 </div>
               </div>
             )}
+
+            {activeTab === 'discussion' && (
+                <ProjectDiscussion projectId={id} />
+                    )}
+                  
+
+                 
+                
+            
           </div>
+
+          
 
           {/* Right Column - Team & Stats */}
           <div className="space-y-6">
-            {/* Team Section */}
             <div className="bg-white rounded-lg shadow p-4">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-medium">Team</h2>
@@ -208,18 +222,37 @@ const ProjectDetails = () => {
                     <div>
                       <p className="font-medium">{member.name}</p>
                       <p className="text-sm text-gray-500">{member.email}</p>
+                      <p className="text-sm text-gray-500">{member.role}</p>
                     </div>
                   </div>
                 ))}
               </div>
+
+              {/* <div className="space-y-3">
+                {project.team.map((member, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                        {member.user.name.charAt(0)}
+                    </div>
+                    <div>
+                        <p className="font-medium">{member.user.name}</p>
+                        <p className="text-sm text-gray-500">{member.user.email}</p>
+                        <p className="text-sm text-gray-500">{member.role}</p>
+                    </div>
+                    </div>
+                ))}
+                </div> */}
             </div>
 
             
                 <InviteTeamModal 
-                isOpen={showTeamModal}
-                onClose={() => setShowTeamModal(false)}
-                projectId={project._id}
-                />
+        isOpen={showTeamModal}
+        onClose={() => setShowTeamModal(false)}
+        projectId={project._id}
+        projectName={project.title}
+        projectPriority={project.priority}
+        projectDeadline={project.deadline}
+      />
 
             {/* Project Stats */}
             <div className="bg-white rounded-lg shadow p-4">

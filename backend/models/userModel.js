@@ -17,13 +17,30 @@ const userSchema = new mongoose.Schema({
     default: 'user'
   },
   connections: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    name: String,
+    email: String,
+    project: {
+      _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project'
+      },
+      name: String,
+      priority: String,
+      deadline: Date
+    }
   }],
   pendingRequests: [{
     from: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
+    },
+    project: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Project'
     },
     status: {
       type: String,

@@ -18,8 +18,9 @@ const DashboardLayout = () => {
   const navigationItems = [
     { id: "projects", label: "Projects", icon: "📋", path: "/projects" },
     { id: "tasks", label: "Tasks", icon: "✓", path: "/tasks" },
-    { id: "team", label: "Team", icon: "👥", path: "/team" },
+    { id: "team", label: "Team", icon: "👥", path: "/connections" },
     { id: "analytics", label: "Analytics", icon: "📊", path: "/analytics" },
+    { id: "Request", label: "Request", icon: "📊", path: "/requests" },
     { id: "profile", label: "Profile", icon: <User size={20} />, path: "/profile" },
   ];
 

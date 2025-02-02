@@ -71,7 +71,7 @@ router.post("/", authMiddleware, async (req, res) => {
 
 router.put('/:_id', authMiddleware, async (req, res) => {
   try {
-    const project = await Project.findById(req.params._id);
+    const project = await Project.findById(req.params._id).populate('team.user', 'name email'); // Populate the 'team' field with the user's name and email
     if (!project) return res.status(404).json({ msg: 'Project not found' });
     if (project.leader.toString() !== req.user.id) {
       return res.status(401).json({ msg: 'Not authorized' });

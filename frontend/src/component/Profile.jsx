@@ -4,6 +4,9 @@ import { Mail, Users, Briefcase, CheckCircle, Clock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Camera, Edit2, Check, X, Shield } from 'lucide-react';
 import { useState } from 'react';
+import { use } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
 const UserProfile = () => {
 
     const { user } = useAuth();
@@ -14,6 +17,24 @@ const UserProfile = () => {
 
     //editing features
     const [isEditing, setIsEditing] = useState(false);
+    const [pendingRequests, setPendingRequests] = useState([]);
+        useEffect(() => {
+        const fetchPendingRequests = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/invites', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            });
+            setPendingRequests(response.data); 
+            console.log('Pending Requests:', response.data); // Debug log
+            // Assuming the response has a field with the array of invites
+        } catch (error) {
+            console.error('Error fetching pending requests:', error);
+        }
+        };
+
+        fetchPendingRequests();
+    }, []);
+
   const [editedUser, setEditedUser] = useState({
     name: user.name,
     role: user.role,
@@ -66,6 +87,8 @@ const UserProfile = () => {
 
       if (response.ok) {
         const updatedUser = await response.json();
+        console.log('userRequests:', user.pendingRequests); // Debug log
+
         updateUser(updatedUser);
         setIsEditing(false);
       }
@@ -97,6 +120,7 @@ const UserProfile = () => {
     }
   };
 
+        console.log('userRequests:', user.pendingRequests); // Debug log
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
       <motion.div initial="hidden" animate="visible" variants={containerVariants} className="max-w-4xl mx-auto">
@@ -325,36 +349,37 @@ const UserProfile = () => {
           </motion.div>
 
           {/* Connection Requests Section */}
-          <motion.div 
-            variants={itemVariants}
-            className="bg-white rounded-xl shadow-lg p-6"
+         <motion.div 
+      variants={itemVariants}
+      className="bg-white rounded-xl shadow-lg p-6"
+    >
+      <h2 className="text-xl font-semibold mb-4">Pending Requests</h2>
+      <div className="space-y-4">
+        {pendingRequests.slice(0, 4).map((request, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
           >
-            <h2 className="text-xl font-semibold mb-4">Pending Requests</h2>
-            <div className="space-y-4">
-              {user.pendingRequests?.slice(0, 4).map((request, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
-                >
-                  <img
-                    src={request.from.profileImage || "/api/placeholder/40/40"}
-                    alt=""
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div className="flex-1">
-                    <p className="font-medium">{request.from.name}</p>
-                    <p className="text-sm text-gray-600">
-                      <Clock className="h-4 w-4 inline mr-1" />
-                      {new Date(request.timestamp).toLocaleDateString()}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+            <img
+              src={request.from.profileImage || "/api/placeholder/40/40"}
+              alt="User Profile"
+              className="w-10 h-10 rounded-full"
+            />
+            <div className="flex-1">
+              <p className="font-medium">{request.from.name}</p>
+              <p className="px-3 py-1 justify-center text-center bg-blue-100 text-blue-800 rounded-full">{request.status}</p>
+              <p className="text-sm text-gray-600">
+                <Clock className="h-4 w-4 inline mr-1" />
+                {new Date(request.timestamp).toLocaleDateString()}
+              </p>
             </div>
           </motion.div>
+        ))}
+      </div>
+    </motion.div>
         </div>
       </motion.div>
     </div>

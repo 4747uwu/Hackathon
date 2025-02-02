@@ -5,6 +5,8 @@ import DashboardLayout from './pages/DashboardLayout';
 import UserProfile from './component/Profile';
 import UserSearch from './component/UserSearch';
 import ProjectDetails from './component/ProjectPage';
+import Request from './pages/Requests';
+import TeamConnectionsPage from './pages/TeamConnectionsPage';
 const App = () => {
   return (
     <Router>
@@ -14,6 +16,8 @@ const App = () => {
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/search" element={<UserSearch />} />
         <Route path="/project/:id" element={<ProjectDetails />} />
+        <Route path="/requests" element={<Request />} />
+        <Route path="/connections" element={<TeamConnectionsPage />} />
         <Route path="/" element={<DashboardLayout />} /> {/* Default route */}
       </Routes>
     </Router>

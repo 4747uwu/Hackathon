@@ -9,17 +9,25 @@ import projectRoute from "./routes/projectRoute.js";
 import userRoute from "./routes/userRoute.js";
 import userProfile from "./routes/userProfile.js";
 import inviteRoute from "./routes/inviteRoute.js";
+import setupWebSocketServer from './config/websocketConfig.js';
+import http from 'http';
+import discussionRoute from './routes/discussionRoute.js';
 
 const app = express();
 const PORT = 5000;
+const server = http.createServer(app);
 
+// Connect to the database
 connectDB();
 
+// Setup CORS and WebSocket
 const corsOptions = {
   origin: 'http://localhost:5173', // Allow frontend URL
   credentials: true, // Allow cookies to be sent
 };
+setupWebSocketServer(server); // Initialize WebSocket server
 
+// Use middleware
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
@@ -31,18 +39,15 @@ app.use(session({
   cookie: { secure: process.env.NODE_ENV === 'production' } // Use secure cookies in production
 }));
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
-
+// API routes
 app.use('/auth', authRoute);
 app.use('/project', projectRoute);
 app.use('/user', userRoute);
 app.use('/users/profile', userProfile);
-app.use('/',inviteRoute)
+app.use('/', inviteRoute);
+app.use('/', discussionRoute);
 
-
+// Start the HTTP server
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});

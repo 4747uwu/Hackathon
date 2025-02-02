@@ -19,6 +19,7 @@ const projectSchema = new mongoose.Schema({
   },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false }, // Creator of the project
   team: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Team members
+  
   tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }], // Linked tasks
   deadline: { type: Date, required: false }, // Project deadline
   priority: { type: String, enum: ["Low", "Medium", "High"], default: "Medium" }, // Importance level

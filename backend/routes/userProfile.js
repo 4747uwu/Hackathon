@@ -44,12 +44,75 @@ const upload = multer({
 
 // Define your routes here
 
+// router.put('/', authMiddleware, async (req, res) => {
+//   try {
+//     const { name, role, email, bio } = req.body;
+
+//     // Find user and check if email is already taken (if email is being changed)
+// const user = await User.findById(req.user._id)
+//   .populate({
+//     path: 'pendingRequests.from',
+//     select: 'name email'
+//   })
+//   .exec();
+//   console.log(user.pendingRequests);
+//     if (email !== user.email) {
+//       const existingUser = await User.findOne({ email });
+//       if (existingUser) {
+//         return res.status(400).json({ message: 'Email already in use' });
+//       }
+//     }
+
+//     // Only allow role update if user is admin
+//     const updateFields = {
+//       name,
+//       email,
+//       bio
+//     };
+
+//     if (req.user.role === 'admin') {
+//       updateFields.role = role;
+//     }else{
+//         console.log("You are not an admin")
+//     }
+
+//     const updatedUser = await User.findByIdAndUpdate(
+//       req.user._id,
+//       { $set: updateFields },
+//       { new: true, runValidators: true }
+//     )
+//       .populate('connections', 'name profileImage')
+//       .populate({
+//         path: 'projects.project',
+//         select: 'name description status'
+//       })
+//       .populate({
+//         path: 'pendingRequests.from',
+//         select: 'name profileImage'
+//       })
+//       .populate('tasks', 'title status dueDate');
+
+//     res.json(updatedUser);
+//   } catch (error) {
+//     console.error('Error updating profile:', error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// });
 router.put('/', authMiddleware, async (req, res) => {
   try {
     const { name, role, email, bio } = req.body;
 
     // Find user and check if email is already taken (if email is being changed)
-    const user = await User.findById(req.user._id).populate('pendingRequests.from', 'name email');
+    const user = await User.findById(req.user._id)
+      .populate({
+        path: 'pendingRequests.from',
+        select: 'name email profileImage'  // Include 'profileImage' to ensure it's populated
+      })
+      .exec();
+
+    // Log the populated requests to ensure it's working
+    console.log("Populated pendingRequests: ", user.pendingRequests);
+
     if (email !== user.email) {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -66,10 +129,11 @@ router.put('/', authMiddleware, async (req, res) => {
 
     if (req.user.role === 'admin') {
       updateFields.role = role;
-    }else{
-        console.log("You are not an admin")
+    } else {
+      console.log("You are not an admin");
     }
 
+    // Update user and populate necessary fields
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { $set: updateFields },
@@ -82,16 +146,18 @@ router.put('/', authMiddleware, async (req, res) => {
       })
       .populate({
         path: 'pendingRequests.from',
-        select: 'name profileImage'
+        select: 'name profileImage'  // Ensure 'profileImage' is included
       })
       .populate('tasks', 'title status dueDate');
 
+    // Send the updated user data
     res.json(updatedUser);
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 // Update profile image
 router.put('/profile-image', authMiddleware, upload.single('profileImage'), async (req, res) => {

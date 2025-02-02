@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Search, UserPlus, Check } from 'lucide-react';
 import axios from 'axios';
 
-const InviteTeamModal = ({ isOpen, onClose, projectId }) => {
+const InviteTeamModal = ({ isOpen, onClose, projectId, projectName, projectPriority, projectDeadline }) => {
   const [searchEmail, setSearchEmail] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -50,7 +50,7 @@ const InviteTeamModal = ({ isOpen, onClose, projectId }) => {
   const sendInvite = async (userId) => {
     try {
       await axios.post('http://localhost:5000/invite', 
-        { userId, projectId },
+         { userId, projectId, projectName, projectPriority, projectDeadline },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
       );
       setInvitedUsers(new Set([...invitedUsers, userId]));
@@ -113,7 +113,7 @@ const InviteTeamModal = ({ isOpen, onClose, projectId }) => {
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                      {user.name.charAt(0)}
+                      {/* {user.name.charAt(0)} */}
                     </div>
                     <div>
                       <p className="font-medium">{user.name}</p>
