@@ -24,7 +24,16 @@ const projectSchema = new mongoose.Schema({
   deadline: { type: Date, required: false }, // Project deadline
   priority: { type: String, enum: ["Low", "Medium", "High"], default: "Medium" }, // Importance level
   labels: [{ type: String }], // Custom tags for classification
-  files: [{ type: mongoose.Schema.Types.ObjectId, ref: "File" }], // Attached documents
+  // files: [{ type: mongoose.Schema.Types.ObjectId, ref: "File" }], // Attached documents
+
+   files: [
+    {
+      url: String,
+      name: String,
+      uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      uploadedAt: { type: Date, default: Date.now }
+    }
+  ],
   discussion: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }], // Project-related comments/discussions
   createdAt: { type: Date, default: Date.now }, // Timestamp of project creation
   updatedAt: { type: Date, default: Date.now }, // Last update timestamp

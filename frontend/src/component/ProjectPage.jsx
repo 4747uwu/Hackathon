@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import InviteTeamModal from '../component/InviteTeamModal';
+import MilestoneTracker from '../component/MilestoneTracker';
 import { 
   Clock, 
   Flag, 
@@ -18,7 +19,7 @@ import {
   Milestone
 } from 'lucide-react';
 import ProjectDiscussion from './ProjectDiscussion';
-import MilestoneTracker from './MilestoneTracker';
+import FileUploader from './FileUploader';
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -260,9 +261,9 @@ console.log('Project:', project); // Debug log
                       {tasks.map((task, index) => (
                         <div key={index} className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg" >
                           <CheckSquare
-  size={20}
-  className={task.status === "completed" ? "text-green-500" : "text-gray-400"}
-/>
+                            size={20}
+                            className={task.status === "completed" ? "text-green-500" : "text-gray-400"}
+                        />
                           <div className="flex-1" onClick={(e) => {markTaskAsCompleted(task._id)}}>
                             <h3 className="font-medium">{task.title}</h3>
                             <p className="text-sm text-gray-500">{task.description}</p>
@@ -295,10 +296,9 @@ console.log('Project:', project); // Debug log
             {activeTab === 'discussion' && (
                 <ProjectDiscussion projectId={id} />
                     )}
-                  
-
-                 
-                
+            {activeTab === 'files' && (
+                <FileUploader projectId={id} />
+                    )}
             
           </div>
 

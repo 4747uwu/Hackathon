@@ -13,7 +13,13 @@ import setupWebSocketServer from './config/websocketConfig.js';
 import http from 'http';
 import discussionRoute from './routes/discussionRoute.js';
 import taskRoute from './routes/taskRoute.js';
+import {put} from '@vercel/blob'
+import multer from 'multer';
+import uploadRoute from './routes/uploadRoute.js'
+import welcomeImage from './routes/welcomeImage.js'
 import milestoneRoute from './routes/milestoneRoute.js'
+
+
 const app = express();
 const PORT = 5000;
 const server = http.createServer(app);
@@ -27,6 +33,9 @@ const corsOptions = {
   credentials: true, // Allow cookies to be sent
 };
 setupWebSocketServer(server); // Initialize WebSocket server
+
+const storage = multer.memoryStorage();
+const upload = multer({storage});
 
 // Use middleware
 app.use(cors(corsOptions));
@@ -48,7 +57,10 @@ app.use('/user', userRoute);
 app.use('/users/profile', userProfile);
 app.use('/', inviteRoute);
 app.use('/', discussionRoute);
+app.use('/files',uploadRoute)
+app.use('/welcome-image',welcomeImage)
 app.use('/milestone',milestoneRoute)
+
 // Start the HTTP server
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import ProjectDashboard from '../component/ProjectDashboard';
 import { User } from "lucide-react";
 import { useAuth } from '../context/AuthContext'; // Import the AuthContext
+import { PieChart, Calendar, Clock, MessageSquare, Brain, FileText, Users, Video, Notebook, Zap } from 'lucide-react';
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -17,10 +18,10 @@ const DashboardLayout = () => {
 
   const navigationItems = [
     { id: "projects", label: "Projects", icon: "📋", path: "/projects" },
-    { id: "tasks", label: "Tasks", icon: "✓", path: "/tasks" },
+    // { id: "tasks", label: "Tasks", icon: "✓", path: "/tasks" },
     { id: "team", label: "Team", icon: "👥", path: "/connections" },
     { id: "analytics", label: "Analytics", icon: "📊", path: "/analytics" },
-    { id: "Request", label: "Request", icon: "📊", path: "/requests" },
+    { id: "Request", label: "Request", icon: <Zap />, path: "/requests" },
     { id: "profile", label: "Profile", icon: <User size={20} />, path: "/profile" },
   ];
 

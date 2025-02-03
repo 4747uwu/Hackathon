@@ -7,6 +7,7 @@ import UserSearch from './component/UserSearch';
 import ProjectDetails from './component/ProjectPage';
 import Request from './pages/Requests';
 import TeamConnectionsPage from './pages/TeamConnectionsPage';
+import LandingPage from './pages/LandingPage';
 const App = () => {
   return (
     <Router>
@@ -18,7 +19,8 @@ const App = () => {
         <Route path="/project/:id" element={<ProjectDetails />} />
         <Route path="/requests" element={<Request />} />
         <Route path="/connections" element={<TeamConnectionsPage />} />
-        <Route path="/" element={<DashboardLayout />} /> {/* Default route */}
+        <Route path="/" element={<LandingPage />} />
+        {/* <Route path="/" element={<DashboardLayout />} />  */}
       </Routes>
     </Router>
   );

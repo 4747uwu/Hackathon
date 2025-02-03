@@ -142,7 +142,7 @@ export const googleAuthCallback = (req, res) => {
   const token = jwt.sign({ id: req.user._id }, JWT_SECRET, { expiresIn: '10h' });
   console.log('Google Auth Token:', token);
   res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-  res.redirect(`${process.env.CLIENT_URL}`);
+  res.redirect(`${process.env.CLIENT_URL}/dashboard`);
 };
 
 
