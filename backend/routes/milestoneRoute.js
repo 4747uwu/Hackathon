@@ -94,93 +94,94 @@ router.put("/:projectId", authMiddleware, async (req, res) => {
 
 
 router.post("/generate/:projectId", authMiddleware, async (req, res) => {
-    try {
-      const { projectId } = req.params;
-  
-      // ✅ Step 1: Fetch project details
-      const project = await Project.findById(projectId);
-      if (!project) {
-        return res.status(404).json({ message: "Project not found" });
-      }
-  
-      // ✅ Step 2: Fetch tasks concurrently using Promise.all
-      let tasks = [];
-      try {
-        tasks = await Promise.all(
-          project.tasks.map(async (taskId) => {
-            const task = await Task.findOne({ _id: taskId });
-            if (!task) throw new Error(`Task with ID ${taskId} not found`);
-            return task.title; // Extract task title
-          })
-        );
-      } catch (error) {
-        console.error("Error fetching tasks:", error.message);
-        return res.status(500).json({ message: "Server Error", error: error.message });
-      }
-  
-      console.log("Tasks:", tasks);
-  
-      // ✅ Step 3: Prepare prompt for Gemini API
-      const prompt = `Given the project titled "${project.title}" with the description: "${project.description}" and tasks : "${tasks}", generate a structured list of key milestones that might be needed in the project. Only return a list of one-word milestone names in this exact format: ["milestone1","milestone2","milestone3","milestone4"...]. Avoid backticks or any quotes outside of the array.`;
-  
-      console.log("Using API Key:", process.env.GEMINI_API_KEY);
-  
-      // ✅ Step 4: Call Gemini API for milestone generation
-      let generatedArray;
-      try {
-        const response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-          {
-            contents: [{ parts: [{ text: prompt }] }],
-          },
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-  
-        const responseText = response.data.candidates[0].content.parts[0].text.trim();
-        console.log("Raw Response from API:", responseText);
-  
-        // ✅ Step 5: Parse response safely
-        if (!responseText.startsWith("[")) {
-          throw new Error("Invalid response format: Expected JSON array");
-        }
-  
-        generatedArray = JSON.parse(responseText);
-        if (!Array.isArray(generatedArray)) {
-          throw new Error("Parsed response is not an array");
-        }
-  
-        console.log("Parsed Milestones:", generatedArray);
-      } catch (error) {
-        console.error("Error calling Gemini API:", error.message);
-        if (error.response) {
-          console.error("Response Status:", error.response.status);
-          console.error("Response Data:", error.response.data);
-        }
-        return res.status(500).json({ message: "Error generating milestones", error: error.message });
-      }
-  
-      // ✅ Step 6: Format milestones for database
-      const milestoneTitles = generatedArray.map((title) => ({ title, completed: false }));
-  
-      // ✅ Step 7: Save milestones to the database
-      let milestoneDoc = await Milestone.findOne({ project: projectId });
-  
-      if (!milestoneDoc) {
-        milestoneDoc = new Milestone({ project: projectId, milestones: [] });
-      }
-  
-      milestoneDoc.milestones = milestoneTitles;
-      await milestoneDoc.save();
-  
-      // ✅ Step 8: Return saved milestones
-      return res.status(200).json(milestoneDoc.milestones);
-    } catch (error) {
-      console.error("Unexpected error:", error.message);
-      return res.status(500).json({ message: "Unexpected Server Error", error: error.message });
+  try {
+    const { projectId } = req.params;
+
+    // ✅ Step 1: Fetch project details
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
     }
-  });
+
+    // ✅ Step 2: Fetch tasks concurrently using Promise.all
+    let tasks = [];
+    try {
+      tasks = await Promise.all(
+        project.tasks.map(async (taskId) => {
+          const task = await Task.findOne({ _id: taskId });
+          if (!task) throw new Error(`Task with ID ${taskId} not found`);
+          if(task.status == "completed") return null;
+          return task.title; // Extract task title
+        })
+      );
+    } catch (error) {
+      console.error("Error fetching tasks:", error.message);
+      return res.status(500).json({ message: "Server Error", error: error.message });
+    }
+
+    console.log("Tasks:", tasks);
+
+    // ✅ Step 3: Prepare prompt for Gemini API
+    const prompt = `Given the project titled "${project.title}" with the description: "${project.description}" and tasks are ${tasks}, generate a structured list of key milestones that might be needed in the project. Only return a list of milestone names with hints for doing them in this exact format: ["milestone1","milestone2","milestone3","milestone4"]. Avoid backticks or any quotes outside of the array. emphasis including the name of the tasks dont give general milestones like`;
+
+    console.log("Using API Key:", process.env.GEMINI_API_KEY);
+
+    // ✅ Step 4: Call Gemini API for milestone generation
+    let generatedArray;
+    try {
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        {
+          contents: [{ parts: [{ text: prompt }] }],
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const responseText = response.data.candidates[0].content.parts[0].text.trim();
+      console.log("Raw Response from API:", responseText);
+
+      // ✅ Step 5: Parse response safely
+      if (!responseText.startsWith("[")) {
+        throw new Error("Invalid response format: Expected JSON array");
+      }
+
+      generatedArray = JSON.parse(responseText);
+      if (!Array.isArray(generatedArray)) {
+        throw new Error("Parsed response is not an array");
+      }
+
+      console.log("Parsed Milestones:", generatedArray);
+    } catch (error) {
+      console.error("Error calling Gemini API:", error.message);
+      if (error.response) {
+        console.error("Response Status:", error.response.status);
+        console.error("Response Data:", error.response.data);
+      }
+      return res.status(500).json({ message: "Error generating milestones", error: error.message });
+    }
+
+    // ✅ Step 6: Format milestones for database
+    const milestoneTitles = generatedArray.map((title) => ({ title, completed: false }));
+
+    // ✅ Step 7: Save milestones to the database
+    let milestoneDoc = await Milestone.findOne({ project: projectId });
+
+    if (!milestoneDoc) {
+      milestoneDoc = new Milestone({ project: projectId, milestones: [] });
+    }
+
+    milestoneDoc.milestones = milestoneTitles;
+    await milestoneDoc.save();
+
+    // ✅ Step 8: Return saved milestones
+    return res.status(200).json(milestoneDoc.milestones);
+  } catch (error) {
+    console.error("Unexpected error:", error.message);
+    return res.status(500).json({ message: "Unexpected Server Error", error: error.message });
+  }
+});
 
 
 export default router;
