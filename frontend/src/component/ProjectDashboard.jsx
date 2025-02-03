@@ -245,6 +245,8 @@ const ProjectDashboard = () => {
   const [projects, setProjects] = useState([]);
   const [projectId, setProjectId] = useState("");
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
+  const [showEditProjectModal, setShowEditProjectModal] = useState(false);
+  const [selectedId,setSelectedId] = useState(null)
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -309,12 +311,38 @@ const ProjectDashboard = () => {
         withCredentials: true,
       });
       setProjects(res.data);
+      setSelectedProjects([])
     } catch (err) {
       setError("Failed to fetch projects");
     } finally {
       setIsLoading(false);
     }
   };
+  const deleteProject = async (id) => {
+    try {
+      console.log("yes");
+      const res = await axios.delete(`http://localhost:5000/project/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        withCredentials: true,
+      });
+      fetchProjects();
+    } catch (err) {
+      setError("Failed to fetch projects");
+    }
+  };
+  const updateProject = async (id,body) => {
+    try {
+      console.log("yes");
+      const res = await axios.put(`http://localhost:5000/project/${id}`, {body,
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        withCredentials: true,
+      });
+      fetchProjects();
+    } catch (err) {
+      setError("Failed to fetch projects");
+    }
+  };
+
 
   const calculateStatistics = () => {
     const now = new Date();
@@ -347,11 +375,13 @@ const ProjectDashboard = () => {
           ));
           break;
         case "complete":
+          console.log("completing");
           await Promise.all(selectedProjects.map(id => 
-            axios.patch(`http://localhost:5000/project/${id}`, 
-              { status: "Completed" },
+            axios.put(`http://localhost:5000/project/toggleStatus/${id}`, {},
               { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-              withCredentials:true}
+              withCredentials:true,
+              credential: 'include'
+            }
             )
           ));
           break;
@@ -481,66 +511,98 @@ const ProjectDashboard = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects().map((project) => (
-            <div key={project._id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <input
-                    type="checkbox"
-                    checked={selectedProjects.includes(project._id)}
-                    onChange={(e) => {
-                      setSelectedProjects(prev =>
-                        e.target.checked
-                          ? [...prev, project._id]
-                          : prev.filter(id => id !== project._id)
-                      );
-                    }}
-                    className="mr-3 mt-1"
-                  />
-                  <div className="flex-1">
-                    <h2 className="text-xl font-semibold">{project.title}</h2>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <span className={`px-3 py-1 rounded-full text-sm ${
-                        project.status === "Completed" ? "bg-green-100 text-green-800" :
-                        project.status === "In Progress" ? "bg-blue-100 text-blue-800" :
-                        "bg-gray-100 text-gray-800"
-                      }`}>
-                        {project.status}
-                      </span>
-                      <span className={`px-3 py-1 rounded-full text-sm ${
-                        project.priority === "High" ? "bg-red-100 text-red-800" :
-                        project.priority === "Medium" ? "bg-yellow-100 text-yellow-800" :
-                        "bg-green-100 text-green-800"
-                      }`}>
-                        {project.priority}
-                      </span>
-                    </div>
+            <div
+            key={project._id}
+            className="relative bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
+          >
+            {/* Edit Button positioned at the top right */}
+            <button
+              onClick={() => {setShowEditProjectModal(true); setSelectedId(project._id)}} // Replace with your edit function
+              className="absolute top-2 right-2 text-blue-600 hover:text-blue-800"
+            >
+              ✏️
+            </button>
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <input
+                  type="checkbox"
+                  checked={selectedProjects.includes(project._id)}
+                  onChange={(e) => {
+                    setSelectedProjects((prev) =>
+                      e.target.checked
+                        ? [...prev, project._id]
+                        : prev.filter((id) => id !== project._id)
+                    );
+                  }}
+                  className="mr-3 mt-1"
+                />
+                <div className="flex-1">
+                  <h2 className="text-xl font-semibold">{project.title}</h2>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        project.status === "Completed"
+                          ? "bg-green-100 text-green-800"
+                          : project.status === "In Progress"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {project.status}
+                    </span>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        project.priority === "High"
+                          ? "bg-red-100 text-red-800"
+                          : project.priority === "Medium"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {project.priority}
+                    </span>
                   </div>
                 </div>
-                <p className="text-gray-600 mb-4 line-clamp-2">{project.description}</p>
-                {project.tags && (
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tags.map((tag, index) => (
-                      <span key={index} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <div className="flex justify-between items-center mt-4">
-                  <span className="text-sm text-gray-500">
-                    Due: {new Date(project.deadline).toLocaleDateString()}
-                  </span>
-                    <Link to={`/project/${project._id}`}>
-                <button
-                  onClick={() => setProjectId(project._id)}
-                  className="text-blue-600 hover:text-blue-800"
-                >
-                  View Details
-                </button>
-                </Link>
+              </div>
+              <p className="text-gray-600 mb-4 line-clamp-2">
+                {project.description}
+              </p>
+              {project.tags && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-sm"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-sm text-gray-500">
+                  Due: {new Date(project.deadline).toLocaleDateString()}
+                </span>
+                <div className="flex gap-2">
+                  <Link to={`/project/${project._id}`}>
+                    <button
+                      onClick={() => setProjectId(project._id)}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      View Details
+                    </button>
+                  </Link>
+                  <button
+                    onClick={() => deleteProject(project._id)}
+                    className="text-blue-600 hover:text-red-800"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>
+          </div>
+          
           ))}
         </div>
       )}
@@ -555,6 +617,17 @@ const ProjectDashboard = () => {
           }}
         />
       )}
+      {/*Edit Modal */}
+      {showEditProjectModal && (<EditProjectModal
+          onClose={() => {setShowEditProjectModal(false);setSelectedId(null)}}
+          onProjectEdit={() => {
+            fetchProjects();
+            setShowEditProjectModal(false);
+          }}
+          id = {selectedId}
+        />
+      )}
+      
     </div>
   );
 };
@@ -585,6 +658,8 @@ const NewProjectModal = ({ onClose, onProjectCreated }) => {
       console.error(err);
     }
   };
+
+
 
   const steps = [
     {
@@ -715,6 +790,170 @@ const NewProjectModal = ({ onClose, onProjectCreated }) => {
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 ml-auto"
             >
               Create Project
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+const EditProjectModal = ({ onClose, onProjectEdit, id  }) => {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    status: "Not Started",
+    deadline: "",
+    priority: "Medium",
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://localhost:5000/project/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      onProjectEdit();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
+
+  const steps = [
+    {
+      title: "Basic Information",
+      content: (
+        <div className="space-y-4">
+          <input
+            type="text"
+            placeholder="Project Title"
+            className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          />
+          <textarea
+            placeholder="Project Description"
+            className="w-full border p-2 rounded-lg h-32 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
+          <select
+            className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+          >
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Under Review">Under Review</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+      ),
+    },
+    {
+      title: "Project Details",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Project Deadline
+            </label>
+            <input
+              type="date"
+              className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={formData.deadline}
+              onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Priority Level
+            </label>
+            <select
+              className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={formData.priority}
+              onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold">Edit Project</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mb-6">
+          <div className="flex mb-2 justify-between">
+            {steps.map((_, index) => (
+              <div
+                key={index}
+                className={`flex-1 ${
+                  index < steps.length - 1 ? "mr-2" : ""
+                }`}
+              >
+                <div
+                  className={`h-2 rounded-full ${
+                    step > index
+                      ? "bg-blue-600"
+                      : "bg-gray-200"
+                  }`}
+                ></div>
+              </div>
+            ))}
+          </div>
+          <div className="text-sm text-gray-600 text-center">
+            Step {step} of {steps.length}: {steps[step - 1].title}
+          </div>
+        </div>
+
+        {steps[step - 1].content}
+
+        <div className="mt-6 flex justify-between">
+          {step > 1 && (
+            <button
+              onClick={() => setStep(step - 1)}
+              className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200"
+            >
+              Back
+            </button>
+          )}
+          {step < steps.length ? (
+            <button
+              onClick={() => setStep(step + 1)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ml-auto"
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 ml-auto"
+            >
+              Edit Project
             </button>
           )}
         </div>

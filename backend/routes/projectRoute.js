@@ -10,9 +10,11 @@ const router = express.Router();
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const projects = await Project.find({
+      deleted: false,
       $or: [
         { owner: req.user._id },
-        { team: req.user._id }
+        { team: req.user._id },
+        
       ]
     }).populate('owner team', 'name email');
     res.json(projects);
@@ -72,11 +74,7 @@ router.post("/", authMiddleware, async (req, res) => {
 
 router.put('/:_id', authMiddleware, async (req, res) => {
   try {
-    const project = await Project.findById(req.params._id).populate('team.user', 'name email'); // Populate the 'team' field with the user's name and email
-    if (!project) return res.status(404).json({ msg: 'Project not found' });
-    if (project.leader.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'Not authorized' });
-    }
+    const project = await Project.findById(req.params._id); // Populate the 'team' field with the user's name and email
     const updatedProject = await Project.findByIdAndUpdate(
       req.params._id,
       { $set: req.body },
@@ -99,5 +97,50 @@ router.get('/:_id',  async (req, res) => {
     res.status(500).json({ message: 'Server Error', error: err.message });
   }
 });
+
+router.delete('/:_id', authMiddleware, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params._id) // Populate the 'team' field with the user's name and email
+
+    const updatedProject = await Project.findByIdAndUpdate(
+      req.params._id,
+      {deleted:true},
+      { new: true }
+    );
+    console.log(updatedProject);
+    res.json(updatedProject);
+  } catch (err) {
+    res.status(500).send('Server Error');
+  }
+});
+
+router.put("/toggleStatus/:_id", authMiddleware, async (req, res) => {
+  try {
+    // Find the project by ID
+    const project = await Project.findById(req.params._id);
+    if (!project) {
+      return res.status(404).json({ msg: "Project not found" });
+    }
+
+    // Check that the logged-in user is the owner (or adjust authorization as needed)
+    if (project.owner.toString() !== req.user._id.toString()) {
+      return res.status(401).json({ msg: "Not authorized" });
+    }
+
+    // Determine the new status based on the current status
+
+    // Update the project with the new status and return the updated document
+    const updatedProject = await Project.findByIdAndUpdate(
+      req.params._id,
+      { status: "Completed" },
+      { new: true }
+    );
+
+    res.json(updatedProject);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+});
+
 
 export default router;
