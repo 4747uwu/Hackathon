@@ -37,7 +37,8 @@ const projectSchema = new mongoose.Schema({
   discussion: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }], // Project-related comments/discussions
   createdAt: { type: Date, default: Date.now }, // Timestamp of project creation
   updatedAt: { type: Date, default: Date.now }, // Last update timestamp
-  aiInsights: { type: String } // AI-generated project suggestions
+  aiInsights: { type: String }, // AI-generated project suggestions
+  deleted: {type:Boolean,default:false, required: false }
 });
 
 const Project = mongoose.model("Project", projectSchema);
